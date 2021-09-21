@@ -1,8 +1,8 @@
 import { Serializable } from '../serializable/serializable';
-import { SerializableCapsule } from '../serializable/serializable-capsule/serializable-capsule';
+import { InstanceSC } from '../serializable/serializable-capsule/instance-serializable-capsule';
 import { Message, MessageProps } from './message';
 
-export interface QueryMessageProps<P extends SerializableCapsule<Serializable>> extends MessageProps<P> {}
+export interface QueryMessageProps<P extends Serializable> extends MessageProps<InstanceSC<P>> {}
 
-export class QueryMessage<P extends SerializableCapsule<Serializable>> extends Message<P, QueryMessageProps<P>> {
+export class QueryMessage<P extends Serializable> extends Message<InstanceSC<P>, QueryMessageProps<P>> {
 }
