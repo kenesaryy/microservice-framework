@@ -1,0 +1,8 @@
+export enum Phase {
+  NOT_STARTED,
+  STARTED,
+  BEFORE_COMMIT,
+  AFTER_COMMIT,
+  ROLLED,
+  CLOSED,
+};
