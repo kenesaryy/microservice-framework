@@ -4,4 +4,7 @@ import { InstanceSC } from '../serializable/serializable-capsule/instance-serial
 
 export interface Handler<
   M extends Message<InstanceSC<Serializable>, MessageProps<InstanceSC<Serializable>>>,
-> {}
+  RES,
+> {
+  handle(message: M): Promise<RES>;
+}
