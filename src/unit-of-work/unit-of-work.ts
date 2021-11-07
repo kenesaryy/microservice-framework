@@ -15,6 +15,13 @@ export class UnitOfWork {
     this.phase = phase || Phase.NOT_STARTED;
   }
 
+  static create(parent?: UnitOfWork): UnitOfWork {
+    return new UnitOfWork(
+      UUID.create(),
+      parent
+    );
+  }
+
   async start(): Promise<void> {
     if (this.phase !== Phase.NOT_STARTED) throw new Error(); // TODO
     await this.changePhase(Phase.STARTED);
