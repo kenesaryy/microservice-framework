@@ -12,7 +12,7 @@ export class InstanceSC<S extends Serializable> implements SerializableCapsule<S
   constructor (serializable: S);
 
   constructor (sOrSConstr: S | Constructor<S>) {
-    if (Reflect.has(sOrSConstr, 'constructor')) {
+    if (typeof sOrSConstr !== 'function') {
       this.serializableConstructor = sOrSConstr.constructor as Constructor<S>;
       this.serializable = sOrSConstr as S;
     } else {
