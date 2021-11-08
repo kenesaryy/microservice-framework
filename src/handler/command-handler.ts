@@ -5,6 +5,6 @@ import { SerializableCapsule } from '../serializable/serializable-capsule/serial
 import { Handler } from './handler';
 
 export interface CommandHandler<
-  C extends CommandMessage<Serializable>,
+  S extends Serializable,
   R extends ResponseMessage<SerializableCapsule<Serializable>>
-> extends Handler<C, R> {}
+> extends Handler<CommandMessage<S>, R> {}
