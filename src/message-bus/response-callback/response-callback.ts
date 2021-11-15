@@ -46,7 +46,7 @@ export class ResponseCallback<
     resp: ResponseMessage<SerializableCapsule<Serializable>>
   ): Promise<void> {
     const handleLogic = this.getMatchedHandleLogic(resp.getPayload());
-    if (!handleLogic) throw new Error(); // TODO
+    if (!handleLogic) throw new Error('Не подходит ни один response'); // TODO
     await handleLogic(
       message,
       resp,
