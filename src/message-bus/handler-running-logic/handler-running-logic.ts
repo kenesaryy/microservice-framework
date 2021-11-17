@@ -1,17 +1,31 @@
+import { Queue } from '../../base/utils/queue';
+import { InternalError } from '../../errors';
 import { Handler } from '../../handler/handler';
-import { Message, MessageProps } from '../../message/message';
+import { HandlableMessage } from '../../message/types';
 import { Serializable } from '../../serializable/serializable';
-import { InstanceSC } from '../../serializable/serializable-capsule/instance-serializable-capsule';
 import { UnitOfWork } from '../../unit-of-work/unit-of-work';
+import { DefaultIntercepterChain } from '../interceptor/default-intercepter-chain';
+import { InterceptorChain } from '../interceptor/intercepter-chain';
+import { MessageHandlerInterceptor } from '../interceptor/message-handler-interceptor';
 import { asyncLocalStorage, getCurrentUnitOfWork } from './async-local-storage';
 
 export class HandlerRunningLogic {
-  async handle<M extends Message<InstanceSC<Serializable>, MessageProps<InstanceSC<Serializable>>>, RES>(
+  async handle<M extends HandlableMessage<Serializable>, RES>(
     message: M,
     handler: Handler<M, RES>,
+    handleInterceptors: Queue<MessageHandlerInterceptor<Handler<M, RES>>>,
   ): Promise<RES> {
     const parentUOW = getCurrentUnitOfWork();
-    const uow = UnitOfWork.create(parentUOW);
+    const uow = UnitOfWork.create(
+      message,
+      parentUOW,
+    );
+    const handlerInterceptorChain = new DefaultIntercepterChain(
+      uow,
+      handleInterceptors.values(),
+      handler,
+      message,
+    );
     const res = await asyncLocalStorage.run(
       {
         uow,
@@ -19,29 +33,32 @@ export class HandlerRunningLogic {
       async (): Promise<RES> => {
         return this.runHandle(
           uow,
-          message,
-          handler,
+          handlerInterceptorChain,
         );
       },
     )
     return res;
   }
 
-  protected async runHandle<M extends Message<InstanceSC<Serializable>, MessageProps<InstanceSC<Serializable>>>, RES>(
-    uow: UnitOfWork,
-    message: M,
-    handler: Handler<M, RES>,
+  protected async runHandle<M extends HandlableMessage<Serializable>, RES>(
+    uow: UnitOfWork<M>,
+    handlerInterceptorChain: InterceptorChain<Handler<M, RES>>,
   ): Promise<RES> {
-    await uow.start();
     try {
-      const res = await handler.handle(message);
-      await uow.commit();
-      await uow.close();
-      return res;
+      await uow.start();
+      try {
+        // const res = await handler.handle(message);
+        const res = await handlerInterceptorChain.proceed();
+        await uow.commit();
+        await uow.close();
+        return res;
+      } catch(err) {
+        await uow.rollback();
+        await uow.close();
+        throw err;
+      }
     } catch(err) {
-      await uow.rollback();
-      await uow.close();
-      throw err;
+      throw new InternalError(); // Может быть, надо будет добавить возможность на расширение
     }
   }
 }
