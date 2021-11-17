@@ -1,23 +1,29 @@
 import { UUID } from '../base/uuid';
+import { GeneralMessage } from '../message/types';
 import { Phase } from './phase';
 import { Subscriber } from './subscriber';
 
-export class UnitOfWork {
+export class UnitOfWork<M extends GeneralMessage> {
   protected phase: Phase;
 
   protected readonly subscribers: Map<Phase, Set<Subscriber>> = new Map();
 
   protected constructor(
     protected readonly id: UUID,
-    protected readonly parent?: UnitOfWork,
+    protected readonly message: M,
+    protected readonly parent?: UnitOfWork<GeneralMessage>,
     phase?: Phase, 
   ) {
     this.phase = phase || Phase.NOT_STARTED;
   }
 
-  static create(parent?: UnitOfWork): UnitOfWork {
+  static create<M extends GeneralMessage>(
+    message: M,
+    parent?: UnitOfWork<GeneralMessage>,
+  ): UnitOfWork<M> {
     return new UnitOfWork(
       UUID.create(),
+      message,
       parent
     );
   }
@@ -50,8 +56,12 @@ export class UnitOfWork {
     this.subscribers.set(phase, subscribersSet);
   }
 
-  getParent(): UnitOfWork | undefined {
+  getParent(): UnitOfWork<GeneralMessage> | undefined {
     return this.parent;
+  }
+
+  getMessage(): M {
+    return this.message;
   }
 
   protected async notifySubscriber(subscriber: Subscriber): Promise<void> {
