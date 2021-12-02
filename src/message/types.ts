@@ -11,3 +11,5 @@ export type GeneralMessage = Message<InstanceSC<Serializable>, MessageProps<Inst
 
 export type HandlableMessage<S extends Serializable> =
   Message<InstanceSC<S>, MessageProps<InstanceSC<S>>>;
+
+export type GeneralHandlableMessage = HandlableMessage<Serializable>;
