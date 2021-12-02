@@ -4,6 +4,7 @@ import { EventMessage } from '../../message/event-message';
 import { InferMessageBusSerializable } from '../../message/types';
 import { Serializable } from '../../serializable/serializable';
 import { EventBus } from './event-bus';
+import { EventStorage } from './event-storage';
 
 export class SimpleEventBus extends EventBus {
   protected sConstrAndHandler: Map<
@@ -12,6 +13,12 @@ export class SimpleEventBus extends EventBus {
       EventMessage<Serializable>
     >
   > = new Map();
+
+  constructor(
+    protected readonly eventStorage: EventStorage,
+  ) {
+    super();
+  }
 
   // Эту логику надо вынести в базовую
   async dispatch<S extends Serializable, M extends EventMessage<S>>(
@@ -31,7 +38,7 @@ export class SimpleEventBus extends EventBus {
   }
 
   protected async saveEventMessage(message: EventMessage<Serializable>): Promise<void> {
-    // pass
+    await this.eventStorage.save([message]);
   }
 
   async subscribe<
