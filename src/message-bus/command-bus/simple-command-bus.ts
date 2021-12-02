@@ -8,13 +8,7 @@ import { SerializableCapsule } from '../../serializable/serializable-capsule/ser
 import { ResponseCallback } from '../response-callback/response-callback';
 import { CommandBus } from './command-bus';
 
-export class SimpleCommandBus extends CommandBus<
-  CommandMessage<Serializable>,
-  CommandHandler<
-    Serializable,
-    ResponseMessage<SerializableCapsule<Serializable>>
-  >
-> {
+export class SimpleCommandBus extends CommandBus {
   protected sConstrAndHandler: Map<
     Constructor<Serializable>,
     CommandHandler<

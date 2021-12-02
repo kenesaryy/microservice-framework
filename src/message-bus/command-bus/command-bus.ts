@@ -6,10 +6,9 @@ import { SerializableCapsule } from '../../serializable/serializable-capsule/ser
 import { MessageBusWithResponse } from '../message-bus-with-response';
 import { ResponseCallback } from '../response-callback/response-callback';
 
-export abstract class CommandBus<
-  S extends Serializable,
-  H extends CommandHandler<S, ResponseMessage<SerializableCapsule<Serializable>>>
-> extends MessageBusWithResponse<S, H> {
+export abstract class CommandBus extends MessageBusWithResponse<
+  Serializable, CommandHandler<Serializable, ResponseMessage<SerializableCapsule<Serializable>>>
+> {
   abstract dispatch<S extends Serializable, M extends CommandMessage<S>>(
     message: M,
     callback: ResponseCallback<M, any>,
