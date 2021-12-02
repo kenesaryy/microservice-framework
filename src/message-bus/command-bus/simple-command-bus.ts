@@ -11,7 +11,7 @@ import { CommandBus } from './command-bus';
 export class SimpleCommandBus extends CommandBus<
   CommandMessage<Serializable>,
   CommandHandler<
-    CommandMessage<Serializable>,
+    Serializable,
     ResponseMessage<SerializableCapsule<Serializable>>
   >
 > {
@@ -28,15 +28,17 @@ export class SimpleCommandBus extends CommandBus<
     message: M,
     callback: ResponseCallback<M, any>,
   ): Promise<void> {
+    const interceptedMsg = await this.intercept(message);
     const handler = this.sConstrAndHandler.get(
-      message.getPayload().serializableConstructor,
+      interceptedMsg.getPayload().serializableConstructor,
     );
     if (!handler) throw new Error('Обработчик не найден'); // TODO
     const res = await this.handlerRunningLogic.handle(
-      message,
+      interceptedMsg,
       handler as any,
+      this.handleInterceptors as any, // TODO
     );
-    await callback.responseReceived(message, res as ResponseMessage<SerializableCapsule<Serializable>>);
+    await callback.responseReceived(interceptedMsg, res as ResponseMessage<SerializableCapsule<Serializable>>);
   }
 
   async subscribe<
