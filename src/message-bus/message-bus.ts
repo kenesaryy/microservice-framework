@@ -23,7 +23,7 @@ export abstract class MessageBus<
     sConstr: Constructor<SERIALIZABLE>, handler: HANDLER,
   ): Promise<void>;
 
-  async intercept<M extends InferMessageFromHandler<H>>(message: M): Promise<M> {
+  protected async intercept<M extends InferMessageFromHandler<H>>(message: M): Promise<M> {
     const dIs = this.dispatchInterceptors.values();
     let res = message;
     while(true) {
@@ -32,5 +32,17 @@ export abstract class MessageBus<
       res = await interceptor.value.handle(res) as M;
     }
     return res;
+  }
+
+  registerHandleInterceptor(
+    interceptor: MessageHandlerInterceptor<H>,
+  ): void {
+    this.handleInterceptors.push(interceptor); // TODO проверка
+  }
+
+  registerDispatchInterceptor(
+    interceptor: MessageDispatchInterceptor<InferMessageFromHandler<H>>,
+  ): void {
+    this.dispatchInterceptors.push(interceptor); // TODO проверка
   }
 }
