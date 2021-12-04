@@ -1,16 +1,15 @@
-import { Constructor } from '../../base/constructor';
 import { QueryHandler } from '../../handler/query-handler';
 import { QueryMessage } from '../../message/query-message';
 import { ResponseMessage } from '../../message/response-message';
 import { InferMessageBusSerializable } from '../../message/types';
-import { Serializable } from '../../serializable/serializable';
+import { Serializable, SerializableConstructor } from '../../serializable/serializable';
 import { SerializableCapsule } from '../../serializable/serializable-capsule/serializable-capsule';
 import { ResponseCallback } from '../response-callback/response-callback';
 import { QueryBus } from './query-bus';
 
 export class SimpleQueryBus extends QueryBus {
   protected sConstrAndHandler: Map<
-    Constructor<Serializable>,
+    SerializableConstructor<Serializable>,
     QueryHandler<
       QueryMessage<Serializable>,
       ResponseMessage<SerializableCapsule<Serializable>>
@@ -39,7 +38,7 @@ export class SimpleQueryBus extends QueryBus {
     M extends QueryMessage<Serializable>,
     H extends QueryHandler<InferMessageBusSerializable<M>, ResponseMessage<SerializableCapsule<Serializable>>>
   >(
-    sConstr: Constructor<InferMessageBusSerializable<M>>,
+    sConstr: SerializableConstructor<InferMessageBusSerializable<M>>,
     handler: H,
   ): Promise<void> {
     if (this.sConstrAndHandler.get(sConstr)) throw new Error(); // TODO

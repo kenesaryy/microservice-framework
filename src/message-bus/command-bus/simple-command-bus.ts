@@ -1,16 +1,15 @@
-import { Constructor } from '../../base/constructor';
 import { CommandHandler } from '../../handler/command-handler';
 import { CommandMessage } from '../../message/command-message';
 import { ResponseMessage } from '../../message/response-message';
 import { InferMessageBusSerializable } from '../../message/types';
-import { Serializable } from '../../serializable/serializable';
+import { Serializable, SerializableConstructor } from '../../serializable/serializable';
 import { SerializableCapsule } from '../../serializable/serializable-capsule/serializable-capsule';
 import { ResponseCallback } from '../response-callback/response-callback';
 import { CommandBus } from './command-bus';
 
 export class SimpleCommandBus extends CommandBus {
   protected sConstrAndHandler: Map<
-    Constructor<Serializable>,
+    SerializableConstructor<Serializable>,
     CommandHandler<
       CommandMessage<Serializable>,
       ResponseMessage<SerializableCapsule<Serializable>>
@@ -39,7 +38,7 @@ export class SimpleCommandBus extends CommandBus {
     M extends CommandMessage<Serializable>,
     H extends CommandHandler<InferMessageBusSerializable<M>, ResponseMessage<SerializableCapsule<Serializable>>>
   >(
-    sConstr: Constructor<InferMessageBusSerializable<M>>,
+    sConstr: SerializableConstructor<InferMessageBusSerializable<M>>,
     handler: H,
   ): Promise<void> {
     if (this.sConstrAndHandler.get(sConstr)) throw new Error(); // TODO

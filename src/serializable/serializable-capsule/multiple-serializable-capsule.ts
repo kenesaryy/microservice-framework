@@ -1,12 +1,11 @@
-import { Constructor } from "../../base/constructor";
-import { Serializable } from "../serializable";
+import { Serializable, SerializableConstructor } from "../serializable";
 import { SerializableCapsule } from "./serializable-capsule";
 
 export class MultipleSerializableCapsule<S extends Serializable> implements SerializableCapsule<S[]> {
-  public serializableConstructor: Constructor<S>;
+  public serializableConstructor: SerializableConstructor<S>;
   protected serializables: S[];
 
-  constructor(serializableConstr: Constructor<S>, serializables?: S[]) {
+  constructor(serializableConstr: SerializableConstructor<S>, serializables?: S[]) {
     this.serializableConstructor = serializableConstr;
     this.serializables = serializables || [];
   }

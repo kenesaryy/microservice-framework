@@ -1,22 +1,21 @@
-import { Constructor } from '../../base/constructor';
-import { Serializable } from '../serializable';
+import { Serializable, SerializableConstructor } from '../serializable';
 import { SerializableCapsule } from './serializable-capsule';
 
 export class InstanceSC<S extends Serializable> implements SerializableCapsule<S> {
 
-  public serializableConstructor: Constructor<S>;
+  public serializableConstructor: SerializableConstructor<S>;
   protected serializable?: S;
 
-  constructor (serializableConstructor: Constructor<S>);
+  constructor (serializableConstructor: SerializableConstructor<S>);
 
   constructor (serializable: S);
 
-  constructor (sOrSConstr: S | Constructor<S>) {
+  constructor (sOrSConstr: S | SerializableConstructor<S>) {
     if (typeof sOrSConstr !== 'function') {
-      this.serializableConstructor = sOrSConstr.constructor as Constructor<S>;
+      this.serializableConstructor = sOrSConstr.constructor as SerializableConstructor<S>;
       this.serializable = sOrSConstr as S;
     } else {
-      this.serializableConstructor = sOrSConstr as Constructor<S>;
+      this.serializableConstructor = sOrSConstr as SerializableConstructor<S>;
     }
   }
 

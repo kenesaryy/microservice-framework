@@ -15,6 +15,8 @@ import { MessageDispatchInterceptor } from './message-bus/interceptor/message-di
 
 async function main() {
   class Command1 implements Serializable {
+    static typeGlobalId = '43af8aaf-6537-450b-86f9-2f2635a45691';
+
     constructor(
       public readonly name: string,
     ) {}

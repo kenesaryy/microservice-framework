@@ -1,14 +1,13 @@
-import { Constructor } from '../../base/constructor';
 import { EventHandler } from '../../handler/event-handler';
 import { EventMessage } from '../../message/event-message';
 import { InferMessageBusSerializable } from '../../message/types';
-import { Serializable } from '../../serializable/serializable';
+import { Serializable, SerializableConstructor } from '../../serializable/serializable';
 import { EventBus } from './event-bus';
 import { EventStorage } from './event-storage';
 
 export class SimpleEventBus extends EventBus {
   protected sConstrAndHandler: Map<
-    Constructor<Serializable>,
+    SerializableConstructor<Serializable>,
     EventHandler<
       EventMessage<Serializable>
     >
@@ -45,7 +44,7 @@ export class SimpleEventBus extends EventBus {
     M extends EventMessage<Serializable>,
     H extends EventHandler<InferMessageBusSerializable<M>>
   >(
-    sConstr: Constructor<InferMessageBusSerializable<M>>,
+    sConstr: SerializableConstructor<InferMessageBusSerializable<M>>,
     handler: H,
   ): Promise<void> {
     if (this.sConstrAndHandler.get(sConstr)) throw new Error(); // TODO

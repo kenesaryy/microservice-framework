@@ -1,7 +1,6 @@
-import { Constructor } from '../base/constructor';
 import { Queue } from '../base/utils/queue';
 import { GeneralHandler, InferMessageFromHandler } from '../handler/types';
-import { Serializable } from '../serializable/serializable';
+import { Serializable, SerializableConstructor } from '../serializable/serializable';
 import { HandlerRunningLogic } from './handler-running-logic/handler-running-logic';
 import { MessageDispatchInterceptor } from './interceptor/message-dispatch-interceptor';
 import { MessageHandlerInterceptor } from './interceptor/message-handler-interceptor';
@@ -20,7 +19,7 @@ export abstract class MessageBus<
     SERIALIZABLE extends S,
     HANDLER extends H,
   >(
-    sConstr: Constructor<SERIALIZABLE>, handler: HANDLER,
+    sConstr: SerializableConstructor<SERIALIZABLE>, handler: HANDLER,
   ): Promise<void>;
 
   protected async intercept<M extends InferMessageFromHandler<H>>(message: M): Promise<M> {
