@@ -18,7 +18,8 @@
     "lint": "tsdx lint",
     "prepare": "tsdx build",
     "size": "size-limit",
-    "analyze": "size-limit --why"
+    "analyze": "size-limit --why",
+    "tsc": "./node_modules/.bin/tsc"
   },
   "peerDependencies": {},
   "husky": {
